@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class CaptureManager {
     private static final String TAG = CaptureManager.class.getSimpleName();
-    private static String callback = null;
+    private static String back = null;
     private static int cameraPermissionReqCode = 250;
 
     private Activity activity;
@@ -183,7 +183,7 @@ public class CaptureManager {
             }
 
             if (intent != null) {
-                callback =  intent.getStringExtra("callback");
+                back =  intent.getStringExtra("callback");
             }
         }
     }
@@ -347,8 +347,8 @@ public class CaptureManager {
         if (barcodeImagePath != null) {
             intent.putExtra(Intents.Scan.RESULT_BARCODE_IMAGE_PATH, barcodeImagePath);
         }
-        if (callback != null) {
-            intent.putExtra("callback", callback);
+        if (back != null) {
+            intent.putExtra("callback", back);
         }
 
         return intent;
