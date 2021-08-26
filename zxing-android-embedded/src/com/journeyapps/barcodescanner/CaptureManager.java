@@ -311,7 +311,7 @@ public class CaptureManager {
      * @param barcodeImagePath a path to an exported file of the Barcode Image, can be null.
      * @return the Intent
      */
-    public static Intent resultIntent(BarcodeResult rawResult, String barcodeImagePath,) {
+    public static Intent resultIntent(BarcodeResult rawResult, String barcodeImagePath) {
         Intent intent = new Intent(Intents.Scan.ACTION);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.putExtra(Intents.Scan.RESULT, rawResult.toString());
