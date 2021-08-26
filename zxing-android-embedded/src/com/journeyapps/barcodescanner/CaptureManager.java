@@ -38,10 +38,10 @@ import java.util.Map;
  * Manages barcode scanning for a CaptureActivity. This class may be used to have a custom Activity
  * (e.g. with a customized look and feel, or a different superclass), but not the barcode scanning
  * process itself.
- *
+ * <p>
  * This is intended for an Activity that is dedicated to capturing a single barcode and returning
  * it via setResult(). For other use cases, use DefaultBarcodeScannerView or BarcodeView directly.
- *
+ * <p>
  * The following is managed by this class:
  * - Orientation lock
  * - InactivityTimer
@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class CaptureManager {
     private static final String TAG = CaptureManager.class.getSimpleName();
-
+    private static String callback = null;
     private static int cameraPermissionReqCode = 250;
 
     private Activity activity;
@@ -138,7 +138,7 @@ public class CaptureManager {
     /**
      * Perform initialization, according to preferences set in the intent.
      *
-     * @param intent the intent containing the scanning preferences
+     * @param intent             the intent containing the scanning preferences
      * @param savedInstanceState saved state, containing orientation lock
      */
     public void initializeFromIntent(Intent intent, Bundle savedInstanceState) {
@@ -180,6 +180,10 @@ public class CaptureManager {
 
             if (intent.getBooleanExtra(Intents.Scan.BARCODE_IMAGE_ENABLED, false)) {
                 returnBarcodeImagePath = true;
+            }
+
+            if (intent != null) {
+                callback =  intent.getStringExtra("callback");
             }
         }
     }
@@ -251,11 +255,12 @@ public class CaptureManager {
 
     /**
      * Call from Activity#onRequestPermissionsResult
-     * @param requestCode The request code passed in {@link androidx.core.app.ActivityCompat#requestPermissions(Activity, String[], int)}.
-     * @param permissions The requested permissions.
+     *
+     * @param requestCode  The request code passed in {@link androidx.core.app.ActivityCompat#requestPermissions(Activity, String[], int)}.
+     * @param permissions  The requested permissions.
      * @param grantResults The grant results for the corresponding permissions
-     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *                     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *                     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
      */
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == cameraPermissionReqCode) {
@@ -302,11 +307,11 @@ public class CaptureManager {
     /**
      * Create a intent to return as the Activity result.
      *
-     * @param rawResult the BarcodeResult, must not be null.
+     * @param rawResult        the BarcodeResult, must not be null.
      * @param barcodeImagePath a path to an exported file of the Barcode Image, can be null.
      * @return the Intent
      */
-    public static Intent resultIntent(BarcodeResult rawResult, String barcodeImagePath) {
+    public static Intent resultIntent(BarcodeResult rawResult, String barcodeImagePath,) {
         Intent intent = new Intent(Intents.Scan.ACTION);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.putExtra(Intents.Scan.RESULT, rawResult.toString());
@@ -342,6 +347,10 @@ public class CaptureManager {
         if (barcodeImagePath != null) {
             intent.putExtra(Intents.Scan.RESULT_BARCODE_IMAGE_PATH, barcodeImagePath);
         }
+        if (callback != null) {
+            intent.putExtra("callback", callback);
+        }
+
         return intent;
     }
 
